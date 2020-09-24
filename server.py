@@ -51,10 +51,10 @@ def index():
         if not request.json or not 'title' in request.json:
             print("Error")
             abort(404)
-        content = (request.json['content'])
+        content = request.json['content']
         picture = request.json['picture']
 
-        new_layout = LayoutModel(title=request.json['title'], content=content,picture=picture,
+        new_layout = LayoutModel(title=request.json['title'], content=content, picture=picture,
                                  date_created=datetime.utcnow())
 
         try:
@@ -81,7 +81,7 @@ def get_layouts():
         return jsonify(all_books_schema.dump(layouts)), 200
 
 
-@app.route('/stored/<int:id>', methods=['GET', 'DELETE'])
+@app.route('/stored/<int:id>', methods=['GET', 'DELETE', 'PUT'])
 def get_layout(id):
     if request.method == 'GET':
         layout = LayoutModel.query.get_or_404(id)
@@ -92,7 +92,16 @@ def get_layout(id):
             db.session.delete(layout_to_delete)
             db.session.commit()
 
-            return jsonify({'Test': 'Successful'}), 201
+            return jsonify({'Test': 'Successful'}), 200
+        except:
+            return jsonify({'Test': 'Failed'}), 404
+    elif request.method == 'PUT':
+        layout = LayoutModel.query.get_or_404(id)
+
+        layout.title = request.json['title']
+        try:
+            db.session.commit()
+            return jsonify({'Test': 'Successful'}), 200
         except:
             return jsonify({'Test': 'Failed'}), 404
 

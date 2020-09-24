@@ -33,7 +33,7 @@ export default class A_star {
     }
 
     findPath(startNode, targetNode) {
-        console.log("Start alg")
+        console.log("Start alg");
         if (startNode === null || targetNode === null)
             return false;
 
@@ -89,6 +89,8 @@ export default class A_star {
                     }
                 }
             });
+
+
         }
 
         if (!pathFound) {

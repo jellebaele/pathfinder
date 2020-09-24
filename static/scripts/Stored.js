@@ -87,6 +87,13 @@ let refreshTable = () => {
                     loadHandler(layout.id);
                 });
 
+                let btnEdit = document.createElement("a");
+                btnEdit.setAttribute("class", "btn btn-primary ml-2");
+                btnEdit.innerHTML = "Edit";
+                btnEdit.addEventListener("click", function () {
+                    updateHandler(layout.id, layout.title);
+                });
+
                 let btnDelete = document.createElement("a");
                 btnDelete.setAttribute("class", "btn btn-primary ml-2");
                 btnDelete.innerHTML = "Delete";
@@ -94,9 +101,11 @@ let refreshTable = () => {
                     deleteHandler(layout.id);
                 });
 
+
                 body.appendChild(title);
                 body.appendChild(text);
                 body.appendChild(btnLoad);
+                body.appendChild(btnEdit);
                 body.appendChild(btnDelete);
 
                 card.appendChild(image);
@@ -124,6 +133,25 @@ let deleteHandler = (id) => {
         .catch(() => {
             console.log("Something went wrong");
         })
+};
+
+let updateHandler = (id, title) => {
+    let answ = window.prompt("New file name: ", title);
+
+    if (answ !== null && answ !== '') {
+        fetch('stored/' + id, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({"title": answ})
+        })
+            .then((response) => {
+                console.log("Update successful");
+                refreshTable();
+            })
+            .catch(() => {
+                console.log("Something went wrong");
+            })
+    }
 };
 
 let clearDataBase = () => {
