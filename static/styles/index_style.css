@@ -1,0 +1,18 @@
+#logo {
+    margin-right: 50px;
+}
+
+#myCanvas{
+    position: absolute;
+    margin-left: 2.5%;
+    margin-top: 1%;
+    color: black;
+}
+
+#idStart {
+    margin-left: 2.5%;
+}
+
+#idVisualize {
+    margin-right: 2.5%;
+}
