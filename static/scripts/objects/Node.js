@@ -6,6 +6,7 @@ export default class Node {
         this.start = start;
         this.target = target;
         this.size = size;
+        // this.isEvaluated = false;
 
         // Distance from this node to start_node
         this.gCost = 0;

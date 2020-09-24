@@ -19,6 +19,8 @@ export default class Grid {
         this.ctx.beginPath();
         this.ctx.strokeStyle = "#808080";
         this.ctx.lineWidth = this.lineWidth;
+
+        // Start with x = 0 and y = 0
         for (let x = 0; x <= this.width - (this.width % this.step); x += this.step) {
             for (let y = 0; y <= this.height - (this.height % this.step); y += this.step) {
                 if (x < this.width - (this.width % this.step) && y < this.height - (this.height % this.step))
@@ -34,6 +36,7 @@ export default class Grid {
         this.ctx.stroke();
     }
 
+    // adjust position of start node
     adjustStartNode(coord) {
         let _startNode = this.searchNode(coord);
 
@@ -48,9 +51,11 @@ export default class Grid {
             _startNode.wall = false;
             this.startNode = _startNode;
         }
+        // Draw nodes on screen
         this.fillNodes();
     }
 
+    // Function to check if coordinate is the start node
     isStartNode(coord) {
         if (this.startNode === null)
             return false;
@@ -59,11 +64,12 @@ export default class Grid {
         return node.start;
     }
 
+    // Adjust position of a target node
     adjustTargetNode(coord) {
         let _targetNode = this.searchNode(coord);
 
         if (!_targetNode.wall && !_targetNode.start) {
-            // Look for start node if startNode is not null and reset it
+            // Look for start node if targetNode is not null and reset it
             if (this.targetNode !== null) {
                 let prevTarget = this.nodes.find(n => n.target);
                 prevTarget.target = false;
@@ -76,6 +82,7 @@ export default class Grid {
         this.fillNodes();
     }
 
+    // Function to check if coord is the targetnode
     isTargetNode(coord) {
         if (this.targetNode === null)
             return false;
@@ -84,6 +91,7 @@ export default class Grid {
         return node.target;
     }
 
+    // Function to create / delete a wall
     adjustWall(coord, insert) {
         // Search for node with same coordinate
         let wallNode = this.searchNode(coord);
@@ -96,6 +104,7 @@ export default class Grid {
         this.fillNodes()
     }
 
+    // Function to search a node in particular
     searchNode(node) {
         let found = false;
         let i = 0;
@@ -108,6 +117,7 @@ export default class Grid {
         }
     }
 
+    // Shift position of a coordinate to the upper left corner
     shiftPosition(pos) {
         let result = new Coordinate(pos.x, pos.y);
         result.x = pos.x - (pos.x % this.step);
@@ -116,19 +126,24 @@ export default class Grid {
         return result;
     }
 
+    // Get adjacent nodes
     getNeighbours(centerNode) {
         let result = [];
 
         for (let x = Math.max(0, centerNode.x - this.step); x <= Math.min(centerNode.x + this.step, this.width - (this.width % this.step)); x += this.step) {
-            for (let y = Math.max(0, centerNode.y - this.step); y <= Math.min(centerNode.y + this.step, this.height - (this.height % this.step)); y += this.step)
-                if ((x < this.width - (this.width % this.step)) && (y < this.height - (this.height % this.step)) && (x !== centerNode.x || y !== centerNode.y)) {
-                    // console.log('x ' + x + " xmax: " + (this.width - (this.width % this.step)) + "; y = " + y + " ymax: " + (this.height - (this.height % this.step)));
+            for (let y = Math.max(0, centerNode.y - this.step); y <= Math.min(centerNode.y + this.step, this.height - (this.height % this.step)); y += this.step) {
+                if ((x < this.width - (this.width % this.step)) && (y < this.height - (this.height % this.step))
+                    && (x !== centerNode.x || y !== centerNode.y)
+                    && ((y === centerNode.y && x !== centerNode.x) || (x === centerNode.x && y !== centerNode.y))) {
                     result.push(this.searchNode(new Coordinate(x, y)));
                 }
+            }
         }
+
         return result;
     }
 
+    // Function to draw the nodes[]
     fillNodes() {
         this.ctx.beginPath();
 
@@ -150,6 +165,7 @@ export default class Grid {
         })
     }
 
+    // Reset all nodes
     resetNodes() {
         this.nodes.forEach(n => {
             n.wall = false;
@@ -163,6 +179,7 @@ export default class Grid {
         this.fillNodes();
     }
 
+    // Load data from JSON string
     loadFromJSON(data) {
         this.nodes = [];
         this.startNode = null;

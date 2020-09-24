@@ -24,7 +24,7 @@ let colorWall = "#00FFFF";
 let mouseDownLeft = false;
 let mouseDownRight = false;
 
-// Booleans to keep track of functions
+// Booleans to keep track of creating start and target nodes
 let isCreatingStartNode = false;
 let isCreatingTargetNode = false;
 
@@ -35,25 +35,33 @@ let isVisualized = false;
 // Server configs
 let serverURL = '/';
 
+// Resize: redraw canvas
 window.onload = function () {
     init();
     window.addEventListener('resize', init, false);
 };
 
 function init() {
+    // Create canvas that fits in the screen
     myWidth = window.innerWidth - 100;
     myHeight = window.innerHeight - 175;
 
     ctx.canvas.width = myWidth;
     ctx.canvas.height = myHeight;
 
+    // Create a grid object
     grid = new Grid(myWidth, myHeight, stepSize, lineWidth, ctx);
 
+    // Create grid
     grid.create();
+    // Fill nodes
     grid.fillNodes();
 
+    // Create A_star object
     a_star = new A_star(grid);
 
+    // Check if the url contains any information
+    // If so, load grid from server
     let link = window.location.href;
     let splittedLink = link.split("?");
     if (splittedLink.length > 1) {
@@ -61,21 +69,11 @@ function init() {
         getMessage('stored', id);
     }
 
+    // Check if button "idVisualize" can be enabled
     checkEnableVisualize();
 }
 
-window.oncontextmenu = function (e) {
-    let coord = grid.shiftPosition(getClickPosition(canv, e));
-    if (!isCreatingTargetNode && !isCreatingStartNode) {
-        grid.adjustWall(coord, false);
-        if (isVisualized){
-            visualize();
-        }
-    }
-
-    return false;
-};
-
+// Function to update button to create startnode
 function createStartNode() {
     if (!isCreatingStartNode) {
         document.getElementById("idStart").value = "Placing start node...";
@@ -86,6 +84,7 @@ function createStartNode() {
     }
 }
 
+// Function to update button to create a target node
 function createTargetNode() {
     if (!isCreatingTargetNode) {
         document.getElementById("idTarget").value = "Placing target node...";
@@ -97,46 +96,57 @@ function createTargetNode() {
     checkEnableVisualize();
 }
 
+// Function to reset the nodes
 function resetCanvas() {
     grid.resetNodes();
     isVisualized = false;
 }
 
+// Function to execute A* algorithm
 function visualize() {
     a_star.findPath(grid.startNode, grid.targetNode);
     grid.fillNodes();
     isVisualized = true;
 }
 
+// Check if button idVisualize can be enabled
 function checkEnableVisualize() {
     document.getElementById("idVisualize").disabled = !(grid.startNode !== null && grid.targetNode !== null);
 }
 
+// Save current grid
 function save() {
+    // Get picture of canvas
     let dataURL = canv.toDataURL('png');
-
-    let answer = window.prompt("File name:", "Save");
+    let answer = window.prompt("File name:", "Layout name");
     if (answer !== null) {
         postMessage(answer, grid.nodes, dataURL);
     }
 }
 
+// Function when clicking on the canvas
 function clickEvent(e) {
+    // Get coordinate of mouse
     let coord = grid.shiftPosition(getClickPosition(canv, e));
 
+    // Check which function has to be activated
     if (!isCreatingTargetNode && !isCreatingStartNode) {
-        // Search for start
+        // Check if clicking position is a start/target node
+        // If not, create a wall
         checkWall(coord);
     } else if (isCreatingStartNode) {
+        // If btn "place start node" is clicked, place start node
         grid.adjustStartNode(coord);
         isCreatingStartNode = false;
         document.getElementById("idStart").value = "Place start node";
     } else if (isCreatingTargetNode) {
+        // if btn "place target node" is click, place target node
         grid.adjustTargetNode(coord);
         isCreatingTargetNode = false;
         document.getElementById("idTarget").value = "Place target node";
     }
 
+    // If a* algorithm is already executed, execute again since something has changed in this function
     if (isVisualized)
         visualize();
 
@@ -145,6 +155,22 @@ function clickEvent(e) {
 
     checkEnableVisualize();
 }
+
+// When clicking on the right button of mouse
+window.oncontextmenu = function (e) {
+    let coord = grid.shiftPosition(getClickPosition(canv, e));
+    if (!isCreatingTargetNode && !isCreatingStartNode) {
+        // Delete wall
+        grid.adjustWall(coord, false);
+        // If a* algorithm is already executed, execute again since something has changed in this function
+        if (isVisualized){
+            visualize();
+        }
+    }
+    // Disable menu from right click
+    return false;
+};
+
 
 function onMouseDown(e) {
     if (e.button === 0) {
@@ -165,12 +191,13 @@ function onMouseUp(e) {
     }
 }
 
+// If mouse moves
 function onMouseMove(e) {
     let coord = grid.shiftPosition(getClickPosition(canv, e));
-
+    // If mouse has clicked
     if (mouseDownLeft && !isCreatingStartNode && !isCreatingTargetNode) {
-        checkWall(coord, e, canv);
-
+        // Check if click coord was on a start/target node
+        checkWall(coord);
         // Drag
         if (isDraggingStart) {
             grid.adjustStartNode(coord);
@@ -179,18 +206,19 @@ function onMouseMove(e) {
             grid.adjustTargetNode(coord);
 
         }
+
         if (isVisualized)
             visualize();
+    // Check right click mouse
     } else if (mouseDownRight && !isCreatingStartNode && !isCreatingTargetNode) {
         grid.adjustWall(coord, false);
         if (isVisualized)
             visualize();
     }
-
-
 }
 
-function checkWall(coord, event, canv) {
+// Function to check if a start/target node is clicked
+function checkWall(coord) {
     if (grid.isStartNode(coord)) {
         isDraggingStart = true;
     } else if (grid.isTargetNode(coord)) {
@@ -202,6 +230,7 @@ function checkWall(coord, event, canv) {
     }
 }
 
+// Get position of mouse click
 function getClickPosition(el, event) {
     let xPosition = 0;
     let yPosition = 0;
@@ -231,6 +260,7 @@ function getClickPosition(el, event) {
     };
 }
 
+// Post message to server
 function postMessage(title, content, picture) {
     fetch(serverURL, {
         method: "POST",
@@ -245,16 +275,20 @@ function postMessage(title, content, picture) {
     });
 }
 
+// Get message from server
 function getMessage(location, id) {
     fetch(serverURL + location + '/' + id)
         .then(data => data.json())
         .then(data => {
             grid.loadFromJSON(data.content);
             checkEnableVisualize();
+        })
+        .catch(() => {
+            console.log("Something went wrong")
         });
 }
 
-
+// Add events to screen
 canv.addEventListener('click', clickEvent, false);
 canv.addEventListener('mousedown', onMouseDown, false);
 canv.addEventListener('mouseup', onMouseUp, false);
@@ -264,4 +298,3 @@ document.getElementById("idTarget").onclick = createTargetNode;
 document.getElementById("idReset").onclick = resetCanvas;
 document.getElementById("idVisualize").onclick = visualize;
 document.getElementById("idSave").onclick = save;
-

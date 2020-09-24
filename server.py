@@ -3,9 +3,12 @@ from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+# Init flask
 app = Flask(__name__)
+# Init database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 
+# create database
 db = SQLAlchemy(app)
 # Serialize objects and models: marshmallow
 ma = Marshmallow(app)
@@ -17,6 +20,7 @@ ma = Marshmallow(app)
 #   - Serialize app-level objects to primitive Python types.
 #     The serialized objects can then be rendered to standard formats such as JSON for use in an HTTP API.
 
+# Create model to store all elements of the layouts
 class LayoutModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
@@ -47,6 +51,7 @@ all_books_schema = LayoutSchema(many=True)
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
 def index():
+    # Post method
     if request.method == 'POST':
         if not request.json or not 'title' in request.json:
             print("Error")
@@ -75,6 +80,7 @@ def stored():
 
 
 @app.route('/stored/get')
+# Get all layouts stored
 def get_layouts():
     if request.method == 'GET':
         layouts = LayoutModel.query.all()
@@ -82,10 +88,13 @@ def get_layouts():
 
 
 @app.route('/stored/<int:id>', methods=['GET', 'DELETE', 'PUT'])
+
 def get_layout(id):
+    # Get specific layout
     if request.method == 'GET':
         layout = LayoutModel.query.get_or_404(id)
         return single_layout_schema.jsonify(layout)
+    # Delete specific layout
     elif request.method == 'DELETE':
         layout_to_delete = LayoutModel.query.get_or_404(id)
         try:
@@ -95,6 +104,7 @@ def get_layout(id):
             return jsonify({'Test': 'Successful'}), 200
         except:
             return jsonify({'Test': 'Failed'}), 404
+    # Update specific layout
     elif request.method == 'PUT':
         layout = LayoutModel.query.get_or_404(id)
 
@@ -107,6 +117,7 @@ def get_layout(id):
 
 
 @app.route('/stored/delete', methods=['DELETE'])
+# Delete entire database
 def delete_db():
     db.drop_all()
     db.create_all()

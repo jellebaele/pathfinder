@@ -1,4 +1,6 @@
+// Refresh the table
 let refreshTable = () => {
+    // Get all saved layouts
     fetch('/stored/get')
         .then(data => data.json())
         .then(data => {
@@ -11,51 +13,7 @@ let refreshTable = () => {
             }
 
             for (let layout of data) {
-                /*// <div class="card mb-4">
-                let card = document.createElement("div");
-                card.setAttribute("class", "card mb-4");
-
-                // <div class="card-header">
-                let header = document.createElement("div");
-                header.setAttribute("class", "card-header");
-                header.innerHTML = layout.title;
-
-                let body = document.createElement("div");
-                body.setAttribute("class", "card-body");
-
-                let text = document.createElement("p");
-                text.setAttribute("class", "card-text");
-                let date = layout.date_created.split(".");
-                let _date = date[0].split("T");
-                text.innerHTML = "Data created: " + _date[1] + " " + _date[0];
-
-                console.log(layout.picture);
-
-                let btnLoad = document.createElement("a");
-                btnLoad.setAttribute("class", "btn btn-primary");
-                btnLoad.setAttribute("id", "btnLoad" + layout.id);
-                btnLoad.innerHTML = "Load";
-                btnLoad.addEventListener("click", function () {
-                    loadHandler(layout.id);
-                });
-
-                let btnDelete = document.createElement("a");
-                btnDelete.setAttribute("class", "btn btn-primary ml-2");
-                btnDelete.innerHTML = "Delete";
-                btnDelete.addEventListener("click", function () {
-                    deleteHandler(layout.id);
-                });
-
-
-                //text.appendChild(btnLoad);
-                body.appendChild(text);
-                body.appendChild(btnLoad);
-                body.appendChild(btnDelete);
-
-                card.appendChild(header);
-                card.appendChild(body);
-                document.getElementById("idMain").appendChild(card);*/
-
+                // Create a card
                 let card = document.createElement('div');
                 card.setAttribute("class", "card");
                 card.setAttribute("style", "width: 18rem;");
@@ -118,10 +76,13 @@ let refreshTable = () => {
         })
 };
 
+// Load handler
 let loadHandler = (id) => {
+    // Redirect to home and add to url the id
     location.replace('/home?id=' + id)
 };
 
+// Deletehandler to delete posts
 let deleteHandler = (id) => {
     fetch('stored/' + id, {
         method: 'DELETE'
@@ -135,6 +96,7 @@ let deleteHandler = (id) => {
         })
 };
 
+// Funcion to update the title of a stored element
 let updateHandler = (id, title) => {
     let answ = window.prompt("New file name: ", title);
 
@@ -154,6 +116,7 @@ let updateHandler = (id, title) => {
     }
 };
 
+// Function to clear the entire database
 let clearDataBase = () => {
     let answ = window.confirm("Are you sure?");
 

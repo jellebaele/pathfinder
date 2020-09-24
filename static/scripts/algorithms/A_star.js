@@ -29,23 +29,28 @@ import Grid from "../Grid.js";
 export default class A_star {
     // Start & target
     constructor(grid) {
-        this.grid = grid
+        this.grid = grid;
+        this.loop = null;
+        this.startNode = null;
+        this.targetNode = null;
+        this.list_open = [];
+        this.list_closed = [];
     }
 
     findPath(startNode, targetNode) {
-        console.log("Start alg");
         if (startNode === null || targetNode === null)
             return false;
 
         let pathFound = false;
 
+        // Create list with nodes to be evaluated
         this.list_open = [];
+        // Create list which have been evaluated
         this.list_closed = [];
         // Add startnode to list open
         this.list_open.push(startNode);
-        // console.log(this.list_open);
 
-        //let counter = 0;
+        // Loop until solution is found or there are no nodes left to be evaluated
         while (this.list_open.length > 0) {
             // get the node with the lowest f_cost
             let current_node = this.list_open[0];
@@ -56,6 +61,7 @@ export default class A_star {
                 }
             });
 
+            // Remove the node with the lowest cost (current_node) from list_open since it will be evaluated
             let removed = false;
             let i = 0;
             while (i < this.list_open.length && !removed) {
@@ -66,19 +72,28 @@ export default class A_star {
                 i++;
             }
 
+            // Add current_node to the list_closed
             this.list_closed.push(current_node);
 
+            // If the position of the current_node == position of the target node,
+            // the path is found
             if (current_node.x === targetNode.x && current_node.y === targetNode.y) {
                 pathFound = true;
                 this.retracePath(startNode, targetNode);
                 return true;
             }
 
+            // Get the neighbors of the current_node that is being evaluated
             let neighbors = this.grid.getNeighbours(current_node);
 
+            // Loop over all neighbors and check if it is a wall or it has already been evaluated
             neighbors.forEach(neighbor => {
                 if (!neighbor.wall && !this.list_closed.includes(neighbor)) {
+                    // Define the gCost (= Distance from this node (=current neighbor) to start_node-
                     let costMovement = current_node.gCost + this.getDistance(current_node, neighbor);
+                    // If the neighbor is not yet in the open_list (= not yet considered)
+                    // Or the cost is smaller than the current gCost, the current_node is the
+                    // node for the current neighbor
                     if (!this.list_open.includes(neighbor) || costMovement < neighbor.gCost){
                         neighbor.gCost = costMovement;
                         neighbor.hCost = this.getDistance(neighbor, targetNode);
@@ -89,10 +104,9 @@ export default class A_star {
                     }
                 }
             });
-
-
         }
 
+        // After while loop; in order to delete the visualised path on the grid
         if (!pathFound) {
             this.grid.path = [];
             return false;
@@ -126,5 +140,4 @@ export default class A_star {
 
         this.grid.path = path;
     }
-
 }
