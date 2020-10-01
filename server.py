@@ -53,19 +53,23 @@ all_books_schema = LayoutSchema(many=True)
 def index():
     # Post method
     if request.method == 'POST':
+        print('Posting')
         if not request.json or not 'title' in request.json:
             print("Error")
             abort(404)
+        title = request.json['title']
         content = request.json['content']
         picture = request.json['picture']
 
-        new_layout = LayoutModel(title=request.json['title'], content=content, picture=picture,
+        new_layout = LayoutModel(title=title, content=content, picture=picture,
                                  date_created=datetime.utcnow())
 
         try:
             db.session.add(new_layout)
             db.session.commit()
-            return jsonify({'Test': 'Successful'}), 201
+            return jsonify({'id': new_layout.id,
+                            'title': title,
+                            'content': content}), 201
 
         except:
             print("error")
@@ -88,7 +92,6 @@ def get_layouts():
 
 
 @app.route('/stored/<int:id>', methods=['GET', 'DELETE', 'PUT'])
-
 def get_layout(id):
     # Get specific layout
     if request.method == 'GET':

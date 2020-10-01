@@ -13,12 +13,10 @@ let isDraggingTarget = false;
 
 // grid props
 let grid;
-const stepSize = 50;
+const stepSize = 30;
 const lineWidth = 1;
 
 // Wall props
-let wall = [];
-let colorWall = "#00FFFF";
 
 // Booleans to keep track of mouseclick events
 let mouseDownLeft = false;
@@ -31,9 +29,23 @@ let isCreatingTargetNode = false;
 // A* pathfind algorithm
 let a_star;
 let isVisualized = false;
+let isVisualizing = false;
+let loop;
+let loopSpeed;
+const speeds = [1000,500,200,50,10];
 
 // Server configs
 let serverURL = '/';
+
+// Colors
+let colorGrid = "#4A5954";
+let colorWall = "#CC3314";
+let colorStart = "#58BC82";
+let colorTarget = "#EFA00B";
+let colorPath = "#22AED1";
+let colorEvaluated = "#AED8EA";
+
+let timer;
 
 // Resize: redraw canvas
 window.onload = function () {
@@ -50,7 +62,8 @@ function init() {
     ctx.canvas.height = myHeight;
 
     // Create a grid object
-    grid = new Grid(myWidth, myHeight, stepSize, lineWidth, ctx);
+    grid = new Grid(myWidth, myHeight, stepSize, lineWidth, ctx, colorGrid, colorWall, colorStart,
+        colorTarget, colorEvaluated, colorPath);
 
     // Create grid
     grid.create();
@@ -71,6 +84,11 @@ function init() {
 
     // Check if button "idVisualize" can be enabled
     checkEnableVisualize();
+
+    // Set label of speed
+    setLabel();
+
+    document.getElementById("idAlert").hidden = true;
 }
 
 // Function to update button to create startnode
@@ -100,12 +118,56 @@ function createTargetNode() {
 function resetCanvas() {
     grid.resetNodes();
     isVisualized = false;
+    isVisualizing = false;
+    location.replace("/");
+}
+
+function visualizeIncrement() {
+    isVisualized = false;
+    if (!isVisualizing){
+        isVisualizing = true;
+        loop = window.setInterval(findPathLoop, loopSpeed);
+    } else {
+        window.clearInterval(loop);
+        a_star.list_open = [];
+        loop = window.setInterval(findPathLoop, loopSpeed);
+    }
+}
+
+function findPathLoop() {
+    let found = a_star.getPathStepByStep(grid.startNode, grid.targetNode);
+    if (found) {
+        isVisualized = true;
+        window.clearInterval(loop);
+        drawPathIncrement();
+    } else if (found === null) {
+        window.clearInterval(loop);
+        isVisualizing = false;
+    }
+    grid.fillNodes();
+}
+
+function drawPathIncrement() {
+    let i = 0;
+    loop = window.setInterval(function () {
+        if (grid.path[i] === undefined){
+            isVisualizing = false;
+            window.clearInterval(loop);
+            return;
+        }
+
+        grid.drawPathIncrement(grid.path[i]);
+
+        i++;
+    }, speeds[3]);
+
 }
 
 // Function to execute A* algorithm
 function visualize() {
-    a_star.findPath(grid.startNode, grid.targetNode);
+    a_star.getPath(grid.startNode, grid.targetNode);
     grid.fillNodes();
+    grid.drawPath();
     isVisualized = true;
 }
 
@@ -147,6 +209,9 @@ function clickEvent(e) {
     }
 
     // If a* algorithm is already executed, execute again since something has changed in this function
+    if (isVisualizing)
+        visualizeIncrement();
+
     if (isVisualized)
         visualize();
 
@@ -163,6 +228,9 @@ window.oncontextmenu = function (e) {
         // Delete wall
         grid.adjustWall(coord, false);
         // If a* algorithm is already executed, execute again since something has changed in this function
+        if (isVisualizing)
+            visualizeIncrement();
+
         if (isVisualized){
             visualize();
         }
@@ -179,16 +247,16 @@ function onMouseDown(e) {
         mouseDownRight = true;
     }
 
+    if (isVisualizing)
+        visualizeIncrement();
+    // If a* algorithm is already executed, execute again since something has changed in this function
     if (isVisualized)
         visualize();
 }
 
-function onMouseUp(e) {
+function onMouseUp() {
     mouseDownLeft = false;
     mouseDownRight = false;
-    if (isVisualized) {
-        visualize();
-    }
 }
 
 // If mouse moves
@@ -204,14 +272,18 @@ function onMouseMove(e) {
 
         } else if (isDraggingTarget) {
             grid.adjustTargetNode(coord);
-
         }
 
+        if (isVisualizing)
+            visualizeIncrement();
         if (isVisualized)
             visualize();
     // Check right click mouse
     } else if (mouseDownRight && !isCreatingStartNode && !isCreatingTargetNode) {
         grid.adjustWall(coord, false);
+
+        if (isVisualizing)
+            visualizeIncrement();
         if (isVisualized)
             visualize();
     }
@@ -225,6 +297,9 @@ function checkWall(coord) {
         isDraggingTarget = true
     } else if (!isDraggingStart && !isDraggingTarget) {
         grid.adjustWall(coord, true);
+
+        if (isVisualizing)
+            visualizeIncrement();
         if (isVisualized)
             visualize();
     }
@@ -240,8 +315,8 @@ function getClickPosition(el, event) {
         if (el.tagName === "BODY") {
             // deal with browser quirks with body/window/document and page scroll
             // different browsers -> different ways of how to handle this
-            var xScrollPos = el.scrollLeft || document.documentElement.scrollLeft;
-            var yScrollPos = el.scrollTop || document.documentElement.scrollTop;
+            let xScrollPos = el.scrollLeft || document.documentElement.scrollLeft;
+            let yScrollPos = el.scrollTop || document.documentElement.scrollTop;
 
             // offsetLeft and top compated to parents
             // client to account for border as well
@@ -268,11 +343,44 @@ function postMessage(title, content, picture) {
         body: JSON.stringify({"title": title, "content": content, "picture": picture})
     }).then((response) => {
         if (response.status === 201) {
-            console.log("Saved")
+            success();
         } else {
-            console.log("Something went wrong");
+            fail();
         }
     });
+}
+
+function success() {
+    let alert = document.getElementById("idAlert");
+    alert.innerText = "";
+
+    let div = document.createElement("div");
+    div.setAttribute("class", "alert alert-success");
+    div.setAttribute("role", "alert");
+    div.innerHTML = "Layout successfully saved !";
+    alert.appendChild(div);
+
+    alert.hidden = false;
+    timer = window.setInterval(hide, 10000);
+}
+
+function fail() {
+    let alert = document.getElementById("idAlert");
+    alert.innerText = "";
+
+    let div = document.createElement("div");
+    div.setAttribute("class", "alert alert-fail");
+    div.setAttribute("role", "alert");
+    div.innerHTML = "Something went wrong";
+    alert.appendChild(div);
+
+    alert.hidden = false;
+    timer = window.setInterval(hide, 10000);
+}
+
+function hide() {
+    clearInterval(timer);
+    document.getElementById("idAlert").hidden = true;
 }
 
 // Get message from server
@@ -284,8 +392,31 @@ function getMessage(location, id) {
             checkEnableVisualize();
         })
         .catch(() => {
-            console.log("Something went wrong")
+            fail();
         });
+}
+
+function setLabel() {
+    let slider = document.getElementById("idSlider");
+    let label = document.getElementById("idSpeed");
+    let txtLabels = ['Very slow', 'Slow', 'Intermediate', 'Fast', 'Very fast'];
+    label.innerHTML = "Speed: " + txtLabels[slider.value];
+
+    loopSpeed = speeds[slider.value];
+    if (isVisualizing) {
+        window.clearInterval(loop);
+        loop = window.setInterval(findPathLoop, loopSpeed);
+    }
+}
+
+function clearPath() {
+    grid.resetPath();
+    isVisualized = false;
+}
+
+function clearWalls() {
+    grid.resetWalls();
+    isVisualized = false;
 }
 
 // Add events to screen
@@ -295,6 +426,9 @@ canv.addEventListener('mouseup', onMouseUp, false);
 canv.addEventListener('mousemove', onMouseMove, false);
 document.getElementById("idStart").onclick = createStartNode;
 document.getElementById("idTarget").onclick = createTargetNode;
-document.getElementById("idReset").onclick = resetCanvas;
-document.getElementById("idVisualize").onclick = visualize;
+document.getElementById("idVisualize").onclick = visualizeIncrement;
 document.getElementById("idSave").onclick = save;
+document.getElementById("idReset").onclick = resetCanvas;
+document.getElementById("idSlider").onmousemove= setLabel;
+document.getElementById("idClearPath").onclick = clearPath;
+document.getElementById("idClearWall").onclick = clearWalls;

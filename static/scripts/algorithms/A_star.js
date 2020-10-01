@@ -35,14 +35,14 @@ export default class A_star {
         this.targetNode = null;
         this.list_open = [];
         this.list_closed = [];
+        this.i = 0;
     }
 
-    findPath(startNode, targetNode) {
+    getPath(startNode, targetNode) {
         if (startNode === null || targetNode === null)
             return false;
 
         let pathFound = false;
-
         // Create list with nodes to be evaluated
         this.list_open = [];
         // Create list which have been evaluated
@@ -50,60 +50,13 @@ export default class A_star {
         // Add startnode to list open
         this.list_open.push(startNode);
 
+
         // Loop until solution is found or there are no nodes left to be evaluated
-        while (this.list_open.length > 0) {
-            // get the node with the lowest f_cost
-            let current_node = this.list_open[0];
-            this.list_open.forEach(node => {
-                if (node.getFCost() < current_node.getFCost() ||
-                    (node.getFCost === current_node.getFCost && node.hCost < current_node.hCost)) {
-                    current_node = node;
-                }
-            });
-
-            // Remove the node with the lowest cost (current_node) from list_open since it will be evaluated
-            let removed = false;
-            let i = 0;
-            while (i < this.list_open.length && !removed) {
-                if (this.list_open[i] === current_node) {
-                    this.list_open.splice(i, 1);
-                    removed = true;
-                }
-                i++;
-            }
-
-            // Add current_node to the list_closed
-            this.list_closed.push(current_node);
-
-            // If the position of the current_node == position of the target node,
-            // the path is found
-            if (current_node.x === targetNode.x && current_node.y === targetNode.y) {
+        while (!pathFound && this.list_open.length > 0) {
+            if (this.calculatePath(startNode, targetNode)) {
                 pathFound = true;
-                this.retracePath(startNode, targetNode);
                 return true;
             }
-
-            // Get the neighbors of the current_node that is being evaluated
-            let neighbors = this.grid.getNeighbours(current_node);
-
-            // Loop over all neighbors and check if it is a wall or it has already been evaluated
-            neighbors.forEach(neighbor => {
-                if (!neighbor.wall && !this.list_closed.includes(neighbor)) {
-                    // Define the gCost (= Distance from this node (=current neighbor) to start_node-
-                    let costMovement = current_node.gCost + this.getDistance(current_node, neighbor);
-                    // If the neighbor is not yet in the open_list (= not yet considered)
-                    // Or the cost is smaller than the current gCost, the current_node is the
-                    // node for the current neighbor
-                    if (!this.list_open.includes(neighbor) || costMovement < neighbor.gCost){
-                        neighbor.gCost = costMovement;
-                        neighbor.hCost = this.getDistance(neighbor, targetNode);
-                        neighbor.parentNode = current_node;
-
-                        if (!this.list_open.includes(neighbor))
-                            this.list_open.push(neighbor)
-                    }
-                }
-            });
         }
 
         // After while loop; in order to delete the visualised path on the grid
@@ -111,6 +64,92 @@ export default class A_star {
             this.grid.path = [];
             return false;
         }
+    }
+
+    getPathStepByStep(startNode, targetNode) {
+        if (startNode === null || targetNode === null) {
+            return null;
+        }
+
+        // Check if it's the first init
+        if (this.list_open.length < 1) {
+            // Create list with nodes to be evaluated
+            this.list_open = [];
+            // Create list which have been evaluated
+            this.list_closed = [];
+            // Add startnode to list open
+            this.list_open.push(startNode);
+            // Delete path from grid
+            this.grid.path = [];
+        }
+
+        let found = this.calculatePath(startNode, targetNode);
+
+        if (this.list_open.length < 1 && !found) {
+            this.grid.path = [];
+            return true;
+        }
+
+        return found;
+    }
+
+    calculatePath(startNode, targetNode) {
+        // get the node with the lowest f_cost
+        let current_node = this.list_open[0];
+        this.list_open.forEach(node => {
+            if (node.getFCost() < current_node.getFCost() ||
+                (node.getFCost === current_node.getFCost && node.hCost < current_node.hCost)) {
+                current_node = node;
+            }
+        });
+
+        // Remove the node with the lowest cost (current_node) from list_open since it will be evaluated
+        let removed = false;
+        let i = 0;
+        while (i < this.list_open.length && !removed) {
+            if (this.list_open[i] === current_node) {
+                this.list_open.splice(i, 1);
+                removed = true;
+            }
+            i++;
+        }
+
+        // Add current_node to the list_closed
+        this.list_closed.push(current_node);
+
+        // If the position of the current_node == position of the target node,
+        // the path is found
+        if (current_node.x === targetNode.x && current_node.y === targetNode.y) {
+            this.retracePath(startNode, targetNode);
+            this.list_open = [];
+            this.list_closed = [];
+            return true;
+        }
+
+        // Get the neighbors of the current_node that is being evaluated
+        let neighbors = this.grid.getNeighbours(current_node);
+
+        // Loop over all neighbors and check if it is a wall or it has already been evaluated
+        neighbors.forEach(neighbor => {
+            if (!neighbor.wall && !this.list_closed.includes(neighbor)) {
+                // Define the gCost (= Distance from this node (=current neighbor) to start_node-
+                let costMovement = current_node.gCost + this.getDistance(current_node, neighbor);
+                // If the neighbor is not yet in the open_list (= not yet considered)
+                // Or the cost is smaller than the current gCost, the current_node is the
+                // node for the current neighbor
+                if (!this.list_open.includes(neighbor) || costMovement < neighbor.gCost) {
+                    neighbor.gCost = costMovement;
+                    neighbor.hCost = this.getDistance(neighbor, targetNode);
+                    neighbor.parentNode = current_node;
+
+                    if (!this.list_open.includes(neighbor))
+                        this.list_open.push(neighbor)
+                }
+            }
+        });
+        this.grid.evaluated = this.list_closed;
+        // console.log(this.list_open.length < 1);
+        return false;
     }
 
     // Get distance:
@@ -138,6 +177,6 @@ export default class A_star {
             }
         }
 
-        this.grid.path = path;
+        this.grid.path = path.reverse();
     }
 }

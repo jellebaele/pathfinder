@@ -2,7 +2,8 @@ import Coordinate from "./objects/Coordinate.js";
 import Node from "./objects/Node.js";
 
 export default class Grid {
-    constructor(width, height, step, lineWidth, ctx) {
+    constructor(width, height, step, lineWidth, ctx, colorGird, colorWall, colorStart,
+                colorTarget, colorEvaluated, colorPath) {
         this.width = width;
         this.height = height;
         this.step = step;
@@ -11,13 +12,23 @@ export default class Grid {
         this.startNode = null;
         this.targetNode = null;
         this.ctx = ctx;
+
+        // Colors
+        this.colorGrid = colorGird;
+        this.colorWall = colorWall;
+        this.colorStart = colorStart;
+        this.colorTarget = colorTarget;
+        this.colorEvaluated =  colorEvaluated;
+        this.colorPath = colorPath;
+
         this.path = [];
+        this.evaluated = [];
     }
 
     // Create list of nodes and draw on screen
     create() {
         this.ctx.beginPath();
-        this.ctx.strokeStyle = "#808080";
+        this.ctx.strokeStyle = this.colorGrid;
         this.ctx.lineWidth = this.lineWidth;
 
         // Start with x = 0 and y = 0
@@ -149,20 +160,49 @@ export default class Grid {
 
         this.nodes.forEach(n => {
             if (n.wall)
-                this.ctx.fillStyle = "#000000";
+                this.ctx.fillStyle = this.colorWall;
             else if (n.start)
-                this.ctx.fillStyle = "#00FF00";
+                this.ctx.fillStyle = this.colorStart;
             else if (n.target)
-                this.ctx.fillStyle = "#FF00FF";
+                this.ctx.fillStyle = this.colorTarget;
             else this.ctx.fillStyle = "#FFFFFF";
             this.ctx.fillRect(n.x + this.lineWidth, n.y + this.lineWidth, n.size, n.size);
         });
 
+        this.evaluated.forEach(n => {
+            this.ctx.fillStyle = this.colorEvaluated;
+            if (!n.target && !n.wall && !n.start)
+                this.ctx.fillRect(n.x + this.lineWidth, n.y + this.lineWidth, n.size, n.size);
+        });
+
+
+    }
+
+    drawPath() {
         this.path.forEach(n => {
-            this.ctx.fillStyle = "#5F9F9F";
+            this.ctx.fillStyle = this.colorPath;
             if (!n.target && !n.wall)
                 this.ctx.fillRect(n.x + this.lineWidth, n.y + this.lineWidth, n.size, n.size);
         })
+    }
+
+    drawPathIncrement(node) {
+        this.ctx.fillStyle = this.colorPath;
+        if (!node.target && !node.wall)
+            this.ctx.fillRect(node.x + this.lineWidth, node.y + this.lineWidth, node.size, node.size);
+
+    }
+
+    resetWalls() {
+        this.nodes.forEach(n => n.wall = false);
+        this.resetPath();
+        this.fillNodes();
+    }
+
+    resetPath() {
+        this.path = [];
+        this.evaluated = [];
+        this.fillNodes();
     }
 
     // Reset all nodes
@@ -199,7 +239,7 @@ export default class Grid {
             let isTarget = (myArr[4].split(':')[1] === 'True');
             let size = parseInt(myArr[5].split(':')[1]);
 
-            let newNode = new Node(new Coordinate(parseInt(x), parseInt(y)), isWall, size, isStart, isTarget)
+            let newNode = new Node(new Coordinate(parseInt(x), parseInt(y)), isWall, size, isStart, isTarget);
             this.nodes.push(newNode);
 
             if (newNode.start) this.startNode = newNode;

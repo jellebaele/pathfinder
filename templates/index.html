@@ -6,14 +6,28 @@
 {% endblock %}
 
 {% block nav %}
+<li class="nav-item">
+    <a id="idClearWall" class="nav-item nav-link" style="cursor:pointer">Clear walls</a>
+</li>
+<li class="nav-item">
+    <a id="idClearPath" class="nav-item nav-link" style="cursor:pointer">Clear path</a>
+</li>
+<li class="nav-item">
+    <a id="idReset" class="nav-item nav-link" style="cursor: pointer">Clear all</a>
+</li>
 <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Options
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item" href="#" id="idSave">Save current layout</a>
+        <a class="dropdown-item" id="idSave" style="cursor: pointer">Save current layout</a>
         <a class="dropdown-item" href="/stored">Load layouts</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" id="idSpeed">Speed: </a>
+        <a class="slidecontainer">
+            <input type="range" min="0" max="4" step="1" value="3" class="slider" id="idSlider">
+        </a>
         <!-- <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="#">Something else here</a> -->
     </div>
@@ -21,13 +35,50 @@
 {% endblock %}
 
 {% block body %}
-<input class="btn btn-primary mt-2" type="button" value="Place start node" id="idStart">
-<input class="btn btn-primary mt-2" type="button" value="Place target node" id="idTarget">
-<input class="btn btn-primary mt-2" type="button" value="Reset" id="idReset">
-<input class="btn btn-primary mt-2" type="button" style="background-color: lightseagreen; border-color: lightseagreen"
-       value="Visualize" id="idVisualize">
-<br>
-<canvas id="myCanvas">
+<div class="d-flex flex-row">
+    <input class="btn btn-primary mt-2 mr-2" type="button" value="Place start node"
+           style="background-color: #58BC82; border-color: #58BC82" id="idStart">
+    <input class="btn btn-primary mt-2 mr-2" type="button" value="Place target node"
+           style="background-color: #EFA00B; border-color: #EFA00B" id="idTarget">
+    <input class="btn btn-primary mt-2" type="button" style="background-color: #22AED1; border-color: #22AED1"
+           value="Visualize !" id="idVisualize">
+    <div class="ml-auto mt-2" style="height: 10px; margin-right: 85px">
+        <div id="idAlert">
+            <div class="alert alert-success" role="alert" hidden>
+                This is a success alert—check it out!
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<ul class="list mt-2">
+    <li><h5>Legend:</h5></li>
+    <li><img src="{{ url_for('static', filename='images/start.jpg') }}" alt="" class="img_legend"/></li>
+    <li>Start node</li>
+    <li><img src="{{ url_for('static', filename='images/target.jpg') }}" alt="" class="img_legend"></li>
+    <li>Target node</li>
+    <li><img src="{{ url_for('static', filename='images/wall.jpg') }}" alt="" class="img_legend"></li>
+    <li>Wall nodes</li>
+    <li><img src="{{ url_for('static', filename='images/evaluated.jpg') }}" alt="" class="img_legend"></li>
+    <li>Evaluated nodes</li>
+    <li><img src="{{ url_for('static', filename='images/path.jpg') }}" alt="" class="img_legend"></li>
+    <li>Calculated path</li>
+</ul>
+
+
+<!-- <input class="btn btn-primary mt-2" type="button" value="Test" id="idTest"> -->
+<!--<div class="d-flex flex-row" style="margin-left: 2.5%">
+    <div class="p-2">Legend:</div>
+    <div class="start-legend">Start</div>
+
+
+    <img class="start" width="40" height="40" src="{{ url_for('static', filename='images/start.jpg') }} "></img>
+    <div class="p-2">Start node</div>
+
+    <div class="p-2">Flex item 3</div>
+</div>-->
+<canvas id="myCanvas" style="margin-right: 85px">
     Your browser does not support this element
 </canvas>
 
