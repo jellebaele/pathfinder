@@ -120,7 +120,7 @@ def get_layout(id):
 
 
 @app.route('/stored/delete', methods=['DELETE'])
-# Delete entire database
+# Deletes the entire database
 def delete_db():
     db.drop_all()
     db.create_all()
