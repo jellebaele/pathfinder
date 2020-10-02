@@ -79,14 +79,6 @@
     cursor: pointer; /* Cursor on hover */
 }
 
-.square {
-    height: 15px;
-    width: 15px;
-    margin-left: 15px;
-    padding-top: 10px;
-
-}
-
 .img_legend {
     height: 20px;
     width: 20px;
