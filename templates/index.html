@@ -2,7 +2,7 @@
 
 {% block head %}
 <script src="{{ url_for('static', filename='scripts/Main.js') }} " type="module"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/index_style.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/index_style.css') }}"/>
 {% endblock %}
 
 {% block nav %}
@@ -35,6 +35,49 @@
 {% endblock %}
 
 {% block body %}
+<!-- How tho center:
+    https://www.w3.org/Style/Examples/007/center.en.html-->
+<div class="pop-outer" id="idOuter">
+    <div class="pop-inner">
+        <h2 style="color: #58BC82; margin-top: 2%">Welcome!</h2>
+        <button type="button" class="close" id="idBtnClose" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <div class="arrows">
+            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-arrow-left-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-arrow-right-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5A.5.5 0 0 0 4 8z"/>
+            </svg>
+        <div class="tutorial-body">
+            <h4>This is a short tutorial that takes you through the different aspects and functionalities of this website and how to use it</h4>
+            <h5>You can always skip this tutorial by closing this pop-up screen, otherwise click on the right arrow.</h5>
+            <img src="http://i.stack.imgur.com/SBv4T.gif" alt="this slowpoke moves"  width=250/>
+        </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- <div class="pop-outer">
+    <div class="pop-inner">
+        <button class="close">X</button>
+        <h2>What is Lorem Ipsum?</h2>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+            scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
+            electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of
+            Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like
+            Aldus PageMaker including versions of Lorem Ipsum.</p>
+    </div>
+</div> -->
+
 <div class="d-flex flex-row">
     <input class="btn btn-primary mt-2 mr-2" type="button" value="Place start node"
            style="background-color: #58BC82; border-color: #58BC82" id="idStart">

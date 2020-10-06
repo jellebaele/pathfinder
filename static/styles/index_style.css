@@ -68,14 +68,14 @@
     appearance: none;
     width: 10px; /* Set a specific slider handle width */
     height: 10px; /* Slider handle height */
-    background: #4CAF50; /* Green background */
+    background: #58BC82; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
     width: 10px; /* Set a specific slider handle width */
     height: 10px; /* Slider handle height */
-    background: #4CAF50; /* Green background */
+    background: #58BC82; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
 
@@ -85,4 +85,66 @@
     align-self: center;
     padding: 0 0 4px 4px;
     margin-left: 15px;
+}
+
+.pop-outer {
+    background-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.pop-inner {
+    position: absolute;
+    z-index: 3;
+    background-color: rgba(255, 255, 255, 1);
+    width: 50%;
+    height: 70%;
+    border: 2px solid #4A5954;
+    border-radius: 4px;
+    text-align: center;
+    margin: auto;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#idBtnClose {
+    position: absolute;
+    right: 2%;
+    top: 2%;
+}
+
+.arrows {
+
+}
+
+.bi-arrow-left-circle {
+    position: absolute;               /* 2 */
+    top: 50%;
+    left: 2%;
+    transform: translate(0%, -50%);
+
+    color: #58BC82;
+}
+
+.bi-arrow-right-circle {
+    color: #58BC82;
+    right: 2%;
+    position: absolute;               /* 2 */
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.tutorial-body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0 -50% 0 0;
+    transform: translate(-50%, -50%);
+    width: 80%;
 }

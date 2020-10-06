@@ -89,6 +89,10 @@ function init() {
     setLabel();
 
     document.getElementById("idAlert").hidden = true;
+    document.getElementById("idBtnClose").onclick = function () {
+        document.getElementsByClassName("pop-outer")[0].hidden = true;
+    }
+
 }
 
 // Function to update button to create startnode
