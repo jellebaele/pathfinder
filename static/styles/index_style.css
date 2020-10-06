@@ -119,16 +119,12 @@
     top: 2%;
 }
 
-.arrows {
-
-}
-
 .bi-arrow-left-circle {
     position: absolute;               /* 2 */
     top: 50%;
     left: 2%;
     transform: translate(0%, -50%);
-
+    cursor: pointer;
     color: #58BC82;
 }
 
@@ -138,6 +134,7 @@
     position: absolute;               /* 2 */
     top: 50%;
     transform: translate(0%, -50%);
+    cursor: pointer;
 }
 
 .tutorial-body {

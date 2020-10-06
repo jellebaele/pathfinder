@@ -32,7 +32,7 @@ let isVisualized = false;
 let isVisualizing = false;
 let loop;
 let loopSpeed;
-const speeds = [1000,500,200,50,10];
+const speeds = [1000, 500, 200, 50, 10];
 
 // Server configs
 let serverURL = '/';
@@ -46,6 +46,8 @@ let colorPath = "#22AED1";
 let colorEvaluated = "#AED8EA";
 
 let timer;
+
+let tutCounter = 1;
 
 // Resize: redraw canvas
 window.onload = function () {
@@ -128,7 +130,7 @@ function resetCanvas() {
 
 function visualizeIncrement() {
     isVisualized = false;
-    if (!isVisualizing){
+    if (!isVisualizing) {
         isVisualizing = true;
         loop = window.setInterval(findPathLoop, loopSpeed);
     } else {
@@ -154,7 +156,7 @@ function findPathLoop() {
 function drawPathIncrement() {
     let i = 0;
     loop = window.setInterval(function () {
-        if (grid.path[i] === undefined){
+        if (grid.path[i] === undefined) {
             isVisualizing = false;
             window.clearInterval(loop);
             return;
@@ -235,7 +237,7 @@ window.oncontextmenu = function (e) {
         if (isVisualizing)
             visualizeIncrement();
 
-        if (isVisualized){
+        if (isVisualized) {
             visualize();
         }
     }
@@ -282,7 +284,7 @@ function onMouseMove(e) {
             visualizeIncrement();
         if (isVisualized)
             visualize();
-    // Check right click mouse
+        // Check right click mouse
     } else if (mouseDownRight && !isCreatingStartNode && !isCreatingTargetNode) {
         grid.adjustWall(coord, false);
 
@@ -423,6 +425,71 @@ function clearWalls() {
     isVisualized = false;
 }
 
+function tutorialPrevious() {
+    if (tutCounter > 1) tutCounter--;
+    tutorialHandler();
+}
+
+function tutorialNext() {
+    if (tutCounter <= 9) tutCounter++;
+    tutorialHandler();
+}
+
+function tutorialHandler() {
+    let tutorialBody = document.getElementById("idTutorialText");
+
+    if (tutCounter === 1) {
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">This is a short tutorial that takes you through the different aspects and\n" +
+            "                functionalities of this website and how to use it.</h4>\n" +
+            "            <h5>Let's get started by clicking on the right arrow!</h5>"
+    } else if (tutCounter === 2) {
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">Concept</h4>\n" +
+            "<h5 class='mb-3'>This site visualizes a pathfinding algorithm, more specifically the A*-algorithm. This " +
+            "algorithm is capable of finding a path between two points.</h5> <img src=\"/static/images/Tutorial_1.gif\" " +
+            "alt=\"pathfinding example\" height=\"100px\"/>"
+    } else if (tutCounter === 3) {
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">How to add the start and the target node</h4>\n" +
+            "<h5 class='mb-3'>You can start by placing a \"Start\" and \"Target\" node in the grid by clicking on the buttons" +
+            " \"Place start node\" and \"Place target node\". Once these nodes are placed, you can drag them to another spot on the grid.</h5>"
+    } else if (tutCounter === 4) {
+        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">How to add and remove walls</h4>\n" +
+        "<h5 class='mb-3'>To create and draw wall nodes, simply left-click on the grid. To remove a wall node, right-click on an existing wall node</h5> <br>" +
+            "<img src=\"/static/images/Tutorial_2.gif\" " +
+        "alt=\"pathfinding example\" height=\"100px\"/>"
+    } else if (tutCounter === 5) {
+        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Visualize path</h4>\n" +
+            "<h5 class='mb-3'>Finally, you can visualize the path by clicking \"Visualize !\". The speed of the visualization process " +
+            "can be adapted \"on-the-fly\" by going to Options > speed.</h5>" +
+            "<img src=\"/static/images/Tutorial_3.gif\" " +
+            "alt=\"pathfinding example\" height=\"150px\"/>"
+    } else if (tutCounter === 6) {
+        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Visualize path</h4>\n" +
+            "<h5 class='mb-3'>Once the path is calculated and visualized, the path is automatically updated when you drag the start and target node around " +
+            "and place walls on different locations.</h5>" +
+            "<img src=\"/static/images/Tutorial_4.gif\" " +
+            "alt=\"pathfinding example\" height=\"100px\"/>"
+    } else if (tutCounter === 7) {
+        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Saving & Loading</h4>\n" +
+            "<h5 class='mb-3'>If you want, you can save the current grid layout by going to Options > Save current layout. " +
+            "Type a file name and click \"Ok\" to save the layout. Saved layouts can be found under Options > Load layouts</h5>"
+    } else if (tutCounter === 8) {
+        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">What else?</h4>\n" +
+            "<h5 class='mb-3'>Other functions can be found in the navigation bar such as clearing the walls, clearing the path, etc.</h5>" +
+            "<img src=\"/static/images/Tutorial_5.JPG\" " +
+            "alt=\"pathfinding example\" width=\"80%\"/>"
+    } else if (tutCounter === 9) {
+        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Enjoy!</h4>\n" +
+            "<h5 class='mb-3'> The full source code of this website can be found via " +
+            "<a href=\"https://github.com/jellebaele/pathfinder\">GitHub</a>."
+    }
+}
+
+function showTutorial() {
+    tutCounter = 1;
+    tutorialHandler();
+    document.getElementsByClassName("pop-outer")[0].hidden = false;
+}
+
 // Add events to screen
 canv.addEventListener('click', clickEvent, false);
 canv.addEventListener('mousedown', onMouseDown, false);
@@ -433,6 +500,9 @@ document.getElementById("idTarget").onclick = createTargetNode;
 document.getElementById("idVisualize").onclick = visualizeIncrement;
 document.getElementById("idSave").onclick = save;
 document.getElementById("idReset").onclick = resetCanvas;
-document.getElementById("idSlider").onmousemove= setLabel;
+document.getElementById("idSlider").onmousemove = setLabel;
 document.getElementById("idClearPath").onclick = clearPath;
 document.getElementById("idClearWall").onclick = clearWalls;
+document.getElementById("idArrowLeft").onclick = tutorialPrevious;
+document.getElementById("idArrowRight").onclick = tutorialNext;
+document.getElementById("idShowTutorial").onclick = showTutorial;
