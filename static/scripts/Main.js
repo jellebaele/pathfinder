@@ -431,7 +431,7 @@ function tutorialPrevious() {
 }
 
 function tutorialNext() {
-    if (tutCounter <= 9) tutCounter++;
+    if (tutCounter < 8) tutCounter++;
     tutorialHandler();
 }
 
@@ -448,39 +448,41 @@ function tutorialHandler() {
             "algorithm is capable of finding a path between two points.</h5> <img src=\"/static/images/Tutorial_1.gif\" " +
             "alt=\"pathfinding example\" height=\"100px\"/>"
     } else if (tutCounter === 3) {
-        tutorialBody.innerHTML = "<h4 class=\"mb-3\">How to add the start and the target node</h4>\n" +
-            "<h5 class='mb-3'>You can start by placing a \"Start\" and \"Target\" node in the grid by clicking on the buttons" +
-            " \"Place start node\" and \"Place target node\". Once these nodes are placed, you can drag them to another spot on the grid.</h5>"
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">How it works:</h4>\n" +
+            "<h5 class='mb-3'>A path is calculated between a start and target point (=node). You can add the starting node and the target node as follows: " +
+            "<h5> To begin, click on the button \"Place start node\" and click on a spot in the grid to add the start node. </h5>" +
+            "<h5 class='mb-3'> The same goes for the target node. Once these nodes are placed, you can drag them to another spot on the grid.</h5>" +
+            "<img src=\"/static/images/Tutorial_6.gif\" " +
+            "alt=\"pathfinding example\" height=\"150px\"/>"
     } else if (tutCounter === 4) {
-        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">How to add and remove walls</h4>\n" +
-        "<h5 class='mb-3'>To create and draw wall nodes, simply left-click on the grid. To remove a wall node, right-click on an existing wall node</h5> <br>" +
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">Add and remove walls</h4>\n" +
+            "<h5 class='mb-3'>To make things more interesting, you can add walls which block the path. To create and draw one wall node, simply left-click on the grid. To create multiple wall nodes, left-click on the grid and hold. " +
+            "To remove a wall node, right-click on an existing wall node or hold to remove multiple wall nodes.</h5> <br>" +
             "<img src=\"/static/images/Tutorial_2.gif\" " +
-        "alt=\"pathfinding example\" height=\"100px\"/>"
+            "alt=\"pathfinding example\" height=\"100px\"/>"
     } else if (tutCounter === 5) {
-        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Visualize path</h4>\n" +
-            "<h5 class='mb-3'>Finally, you can visualize the path by clicking \"Visualize !\". The speed of the visualization process " +
-            "can be adapted \"on-the-fly\" by going to Options > speed.</h5>" +
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">Visualize path</h4>\n" +
+            "<h5 class='mb-3'>Finally, you can visualize the path by clicking \"Visualize !\". The speed " +
+            "can be adapted while the visualisation process is running by going to Options > speed.</h5>" +
             "<img src=\"/static/images/Tutorial_3.gif\" " +
             "alt=\"pathfinding example\" height=\"150px\"/>"
     } else if (tutCounter === 6) {
-        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Visualize path</h4>\n" +
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">Visualize path</h4>\n" +
             "<h5 class='mb-3'>Once the path is calculated and visualized, the path is automatically updated when you drag the start and target node around " +
             "and place walls on different locations.</h5>" +
             "<img src=\"/static/images/Tutorial_4.gif\" " +
             "alt=\"pathfinding example\" height=\"100px\"/>"
     } else if (tutCounter === 7) {
-        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Saving & Loading</h4>\n" +
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">Saving & Loading</h4>\n" +
             "<h5 class='mb-3'>If you want, you can save the current grid layout by going to Options > Save current layout. " +
-            "Type a file name and click \"Ok\" to save the layout. Saved layouts can be found under Options > Load layouts</h5>"
+            "Type a file name and click \"Ok\" to save the layout. Saved layouts can be found under Options > Load layouts.</h5>"
     } else if (tutCounter === 8) {
-        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">What else?</h4>\n" +
-            "<h5 class='mb-3'>Other functions can be found in the navigation bar such as clearing the walls, clearing the path, etc.</h5>" +
+        tutorialBody.innerHTML = "<h4 class=\"mb-3\">What else? Enjoy!</h4>\n" +
+            "<h5 class='mb-3'>Now all that is left for you, is to enjoy! Other functions can be found in the navigation bar such as clearing the walls, clearing the path, etc.</h5>" +
             "<img src=\"/static/images/Tutorial_5.JPG\" " +
-            "alt=\"pathfinding example\" width=\"80%\"/>"
-    } else if (tutCounter === 9) {
-        tutorialBody.innerHTML =  "<h4 class=\"mb-3\">Enjoy!</h4>\n" +
-            "<h5 class='mb-3'> The full source code of this website can be found via " +
-            "<a href=\"https://github.com/jellebaele/pathfinder\">GitHub</a>."
+            "alt=\"pathfinding example\" width=\"80%\"/>" +
+            "<h6 class='mt-5'> The full source code of this website can be found via " +
+            "<a href=\"https://github.com/jellebaele/pathfinder\">GitHub</a>.</h6>"
     }
 }
 
