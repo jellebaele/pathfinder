@@ -6,32 +6,30 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import Form, StringField, PasswordField, validators
 from functools import wraps
+from configuration import ConfigClass
 
 # Init flask
 app = Flask(__name__)
 # Init database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
-app.config['SECRET_KEY'] = 'thisisasecretkey#1234'
+app.config.from_object(__name__+".ConfigClass")
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
+# app.config['SECRET_KEY'] = 'thisisasecretkey#1234'
 
 # create database
 db = SQLAlchemy(app)
-# Create an instance of LoginManager
-login_manager = LoginManager(app)
-login_manager.init_app(app)
-login_manager.login_view = "login"
+
 # Serialize objects and models: marshmallow
 ma = Marshmallow(app)
-
-
 # Marshmallow schemas can be used to:
 #   - Validate input data.
 #   - Deserialize input data to app-level objects.
 #   - Serialize app-level objects to primitive Python types.
 #     The serialized objects can then be rendered to standard formats such as JSON for use in an HTTP API.
 
-
-def set_password(_password):
-    return generate_password_hash(_password)
+# Create an instance of LoginManager
+login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
 
 class User(db.Model, UserMixin):
@@ -45,8 +43,10 @@ class User(db.Model, UserMixin):
 
     # Define the relationship to Role via UserRoles
     roles = db.relationship('Role', secondary='user_roles', backref='users', lazy=True)
+    layouts = db.relationship('LayoutModel', backref="users")
 
-    # layouts = db.relationship('Layouts', backref="users")
+    def set_password(self, _password):
+        self.password = generate_password_hash(_password)
 
     def check_password(self, _password):
         return check_password_hash(self.password, _password)
@@ -69,17 +69,21 @@ class UserRoles(db.Model):
 
 # Create model to store all elements of the layouts
 class LayoutModel(db.Model):
+    __tablename__ = "layouts"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     content = db.Column(db.PickleType)
     picture = db.Column(db.String)
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
-    def __init__(self, title, content, picture, date_created):
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __init__(self, title, content, picture, date_created, user_id):
         self.title = title
         self.content = content
         self.picture = picture
         self.date_created = date_created
+        self.user_id = user_id
 
 
 class LayoutSchema(ma.SQLAlchemyAutoSchema):
@@ -114,12 +118,21 @@ def required_roles(*roles):
 
 def is_current_user_role(roles):
     if 'logged_in' in session:
-        user = db.session.query(User).filter(User.mail == session['mail']).first()
+        user = get_current_user()
+        if user is None:
+            return False
+
         for role in roles:
             role = db.session.query(Role).filter(Role.name == role).first()
             if role is not None and user in role.users:
                 return True
     return False
+
+
+def get_current_user():
+    if 'logged_in' in session:
+        return db.session.query(User).filter(User.mail == session['mail']).first()
+    return None
 
 
 class RegisterForm(Form):
@@ -140,7 +153,7 @@ class RegisterForm(Form):
 # create database
 db.create_all()
 single_layout_schema = LayoutSchema()
-all_books_schema = LayoutSchema(many=True)
+all_layouts_schema = LayoutSchema(many=True)
 
 
 # Use the route() decorator to bind a function to a URL.
@@ -148,25 +161,27 @@ all_books_schema = LayoutSchema(many=True)
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
 def index():
-    # Post method
-    if request.method == 'POST':
-        print('Posting')
+    if request.method == 'POST' and 'logged_in' in session:
         if not request.json or not 'title' in request.json:
             print("Error")
             abort(404)
+
         title = request.json['title']
         content = request.json['content']
         picture = request.json['picture']
+        user_id = db.session.query(User).filter(User.mail == session['mail']).first().id
+        print(user_id)
 
         new_layout = LayoutModel(title=title, content=content, picture=picture,
-                                 date_created=datetime.utcnow())
+                                 date_created=datetime.utcnow(), user_id=user_id)
 
         try:
             db.session.add(new_layout)
             db.session.commit()
             return jsonify({'id': new_layout.id,
                             'title': title,
-                            'content': content}), 201
+                            'content': content,
+                            'user_id': user_id}), 201
 
         except:
             print("error")
@@ -186,8 +201,9 @@ def stored():
 # Get all layouts stored
 def get_layouts():
     if request.method == 'GET':
-        layouts = LayoutModel.query.all()
-        return jsonify(all_books_schema.dump(layouts)), 200
+        curr_user = get_current_user()
+        layouts = LayoutModel.query.filter(LayoutModel.user_id == curr_user.id)
+        return jsonify(all_layouts_schema.dump(layouts)), 200
 
 
 @app.route('/stored/<int:id>', methods=['GET', 'DELETE', 'PUT'])
@@ -197,16 +213,17 @@ def get_layout(id):
     if request.method == 'GET':
         layout = LayoutModel.query.get_or_404(id)
         return single_layout_schema.jsonify(layout)
+
     # Delete specific layout
     elif request.method == 'DELETE':
         layout_to_delete = LayoutModel.query.get_or_404(id)
         try:
             db.session.delete(layout_to_delete)
             db.session.commit()
-
             return jsonify({'Test': 'Successful'}), 200
         except:
             return jsonify({'Test': 'Failed'}), 404
+
     # Update specific layout
     elif request.method == 'PUT':
         layout = LayoutModel.query.get_or_404(id)
@@ -220,7 +237,7 @@ def get_layout(id):
 
 
 @app.route('/stored/delete', methods=['DELETE'])
-@login_required
+@required_roles('admin')
 # Deletes the entire database
 def delete_db():
     db.drop_all()
@@ -234,13 +251,13 @@ def login():
     if request.method == 'POST':
         mail = request.form['mail']
         password = request.form['password']
-
         user = db.session.query(User).filter(User.mail == mail).first()
 
         if user is not None:
             if user.check_password(password):
                 session['logged_in'] = True
                 session['mail'] = mail
+                session['name'] = user.first_name
 
                 login_user(user)
 
@@ -274,7 +291,7 @@ def register():
         password = form.password.data
 
         user = User(mail=email, first_name=first_name, last_name=last_name)
-        user.password = set_password(password)
+        user.set_password(password)
         role = db.session.query(Role).filter(Role.name == 'member').first()
 
         if role is not None:
@@ -288,7 +305,7 @@ def register():
                 flash("E-mail address is already in use.", "warning")
                 return redirect(url_for('register'))
 
-        return redirect(render_template('register.html', form=form))
+        return redirect(redirect(url_for('register')))
 
     return render_template('register.html', form=form)
 
@@ -297,6 +314,13 @@ def register():
 @required_roles('admin')
 def admin():
     return "This is the admin page"
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

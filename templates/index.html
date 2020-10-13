@@ -24,8 +24,12 @@
         Options
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        {% if session.logged_in %}
         <a class="dropdown-item" id="idSave" style="cursor: pointer">Save current layout</a>
-        <a class="dropdown-item" href="/stored">Load layouts</a>
+        <a class="dropdown-item" href="/stored">Load my layouts</a>
+        {% else %}
+        <a class="dropdown-item" style="cursor: pointer" href="{{ url_for('login') }}">Log in for more options</a>
+        {% endif %}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" id="idSpeed">Speed: </a>
         <a class="slidecontainer">

@@ -31,8 +31,15 @@
             </ul>
             <ul class="nav navbar-nav ml-auto">
                 {% if session.logged_in %}
-                <li class="nav-item">
-                    <a href="/profile" class="nav-item nav-link">My profile</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ session.name }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/profile">My profile</a>
+                        <a class="dropdown-item" href="/settings">Settings</a>
+                    </div>
                 </li>
                 <li>
                     <a href="/logout" class="nav-item nav-link">Log out</a>
