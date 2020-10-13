@@ -1,0 +1,36 @@
+{% extends 'template.html' %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/index_style.css') }}"/>
+{% endblock %}.
+
+{% block body %}
+<div id="containerRegister">
+    <h2 id="idRegister" style="text-align: center" class="mb-4">Create an account</h2>
+    {% from "includes/_formhelpers.html" import render_field %}
+    <form method="POST" action="">
+        {% include 'includes/_messages.html' %}
+        <div class="form-row">
+            <div class="col">
+                <div class="form-group">
+                    {{render_field(form.first_name, class_="form-control")}}
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    {{render_field(form.last_name, class_="form-control")}}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {{render_field(form.email, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.password, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.confirm, class_="form-control")}}
+        </div>
+        <p><input type="submit" class="btn btn-primary" value="Register" id="idBtnRegister"></p>
+    </form>
+</div>
+{% endblock %}
