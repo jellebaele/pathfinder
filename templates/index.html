@@ -43,9 +43,6 @@
 {% block body %}
 <!-- How tho center:
     https://www.w3.org/Style/Examples/007/center.en.html-->
-<div class="container">
-    {% include 'includes/_messages.html' %}
-</div>
 <div class="pop-outer" id="idOuter" hidden>
     <div class="pop-inner noselect">
         <h2 style="color: #58BC82; margin-top: 2%">Welcome!</h2>
@@ -82,19 +79,6 @@
 </div>
 
 
-<!-- <div class="pop-outer">
-    <div class="pop-inner">
-        <button class="close">X</button>
-        <h2>What is Lorem Ipsum?</h2>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-            scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
-            electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of
-            Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like
-            Aldus PageMaker including versions of Lorem Ipsum.</p>
-    </div>
-</div> -->
-
 <div class="d-flex flex-row">
     <input class="btn btn-primary mt-2 mr-2" type="button" value="Place start node"
            style="background-color: #58BC82; border-color: #58BC82" id="idStart">
@@ -126,20 +110,7 @@
     <li>Calculated path</li>
 </ul>
 
-
-<!-- <input class="btn btn-primary mt-2" type="button" value="Test" id="idTest"> -->
-<!--<div class="d-flex flex-row" style="margin-left: 2.5%">
-    <div class="p-2">Legend:</div>
-    <div class="start-legend">Start</div>
-
-
-    <img class="start" width="40" height="40" src="{{ url_for('static', filename='images/start.jpg') }} "></img>
-    <div class="p-2">Start node</div>
-
-    <div class="p-2">Flex item 3</div>
-</div>-->
 <canvas id="myCanvas" style="margin-right: 85px">
     Your browser does not support this element
 </canvas>
-
 {% endblock %}
