@@ -24,12 +24,11 @@
         Options
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        {% if session.logged_in %}
-        <a class="dropdown-item" id="idSave" style="cursor: pointer">Save current layout</a>
-        <a class="dropdown-item" href="/stored">Load my layouts</a>
-        {% else %}
-        <a class="dropdown-item" style="cursor: pointer" href="{{ url_for('login') }}">Log in for more options</a>
-        {% endif %}
+
+        <a class="dropdown-item" id="idSave" style="cursor: pointer" {% if not session.logged_in %} hidden {% endif %}>Save current layout</a>
+        <a class="dropdown-item" href="/stored" {% if not session.logged_in %} hidden {% endif %}>Load my layouts</a>
+        <a class="dropdown-item" style="cursor: pointer" href="{{ url_for('login') }}" {% if session.logged_in %} hidden {% endif %}>Log in for more options</a>
+
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" id="idSpeed">Speed: </a>
         <a class="slidecontainer">
@@ -47,7 +46,7 @@
 <div class="container">
     {% include 'includes/_messages.html' %}
 </div>
-<div class="pop-outer" id="idOuter">
+<div class="pop-outer" id="idOuter" hidden>
     <div class="pop-inner noselect">
         <h2 style="color: #58BC82; margin-top: 2%">Welcome!</h2>
         <button type="button" class="close" id="idBtnClose" aria-label="Close">

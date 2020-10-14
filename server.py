@@ -11,7 +11,7 @@ from configuration import ConfigClass
 # Init flask
 app = Flask(__name__)
 # Init database
-app.config.from_object(__name__+".ConfigClass")
+app.config.from_object(__name__ + ".ConfigClass")
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 # app.config['SECRET_KEY'] = 'thisisasecretkey#1234'
 
@@ -170,8 +170,6 @@ def index():
         content = request.json['content']
         picture = request.json['picture']
         user_id = db.session.query(User).filter(User.mail == session['mail']).first().id
-        print(user_id)
-
         new_layout = LayoutModel(title=title, content=content, picture=picture,
                                  date_created=datetime.utcnow(), user_id=user_id)
 
