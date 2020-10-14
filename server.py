@@ -317,7 +317,9 @@ def admin():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+    user = get_current_user()
+    amount = LayoutModel.query.filter(LayoutModel.user_id == user.id).count()
+    return render_template('profile.html', user=user, amount=amount)
 
 
 if __name__ == '__main__':
