@@ -1,7 +1,7 @@
-# pathfinder
+# Pathfinder
 
 This code is used to visualize the A*-pathfinding algorithm together with a 
- small database in which layouts can be stored and loaded. 
+ small database in which users and their layouts can be stored and loaded. 
  
 A website using this code is up-and-running and can be accessed via the following
 link:

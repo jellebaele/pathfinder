@@ -480,7 +480,8 @@ function tutorialHandler() {
     } else if (tutCounter === 7) {
         tutorialBody.innerHTML = "<h4 class=\"mb-3\">Saving & Loading</h4>\n" +
             "<h5 class='mb-3'>If you want, you can save the current grid layout by going to Options > Save current layout. " +
-            "Type a file name and click \"Ok\" to save the layout. Saved layouts can be found under Options > Load layouts.</h5>"
+            "Type a file name and click \"Ok\" to save the layout. Saved layouts can be found under Options > Load layouts.</h5>" +
+            "<br><br> <h6>Note: You need an account for this, do no hesitate to register for free!</h6>"
     } else if (tutCounter === 8) {
         tutorialBody.innerHTML = "<h4 class=\"mb-3\">What else? Enjoy!</h4>\n" +
             "<h5 class='mb-3'>Now all that is left for you, is to enjoy! Other functions can be found in the navigation bar such as clearing the walls, clearing the path, etc.</h5>" +
