@@ -93,6 +93,11 @@ function init() {
     document.getElementById("idAlert").hidden = true;
     document.getElementById("idBtnClose").onclick = function () {
         document.getElementsByClassName("pop-outer")[0].hidden = true;
+    };
+
+    if (!checkCookie("tutorial")) {
+        showTutorial();
+        setCookie("tutorial", "1", 100);
     }
 
 }
@@ -490,6 +495,23 @@ function showTutorial() {
     tutCounter = 1;
     tutorialHandler();
     document.getElementsByClassName("pop-outer")[0].hidden = false;
+}
+
+function setCookie(cname, cvalue, exdays) {
+    let d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";Secure" + ";path=/";
+}
+
+function checkCookie(cname) {
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split('=');
+    if (ca[0] !== cname)
+        return false;
+
+    return parseInt(ca[1]) === 1;
+
 }
 
 // Add events to screen

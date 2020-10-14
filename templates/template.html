@@ -20,7 +20,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav">
+            <ul class="nav navbar-nav navbar-left">
                 <li class="nav-item">
                     <a href="/home" class="nav-item nav-link">Home</a>
                 </li>
@@ -28,6 +28,29 @@
                 <!--<li class="nav-item">
                     <a href="/" class="nav-item nav-link">Home</a>
                 </li>-->
+            </ul>
+            <ul class="nav navbar-nav ml-auto">
+                {% if session.logged_in %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ session.name }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/profile">My profile</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="/logout" class="nav-item nav-link">Log out</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="/register" class="nav-item nav-link">Register</a>
+                </li>
+                <li>
+                    <a href="/login" class="nav-item nav-link">Log in</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
