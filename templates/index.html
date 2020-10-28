@@ -25,14 +25,21 @@
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-        <a class="dropdown-item" id="idSave" style="cursor: pointer" {% if not session.logged_in %} hidden {% endif %}>Save current layout</a>
+        <a class="dropdown-item" id="idSave" style="cursor: pointer" {% if not session.logged_in %} hidden {% endif %}>Save
+            current layout</a>
         <a class="dropdown-item" href="/stored" {% if not session.logged_in %} hidden {% endif %}>Load my layouts</a>
-        <a class="dropdown-item" style="cursor: pointer" href="{{ url_for('login') }}" {% if session.logged_in %} hidden {% endif %}>Log in for more options</a>
+        <a class="dropdown-item" style="cursor: pointer" href="{{ url_for('login') }}" {% if session.logged_in %} hidden
+           {% endif %}>Log in for more options</a>
 
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" id="idSpeed">Speed: </a>
         <a class="slidecontainer">
-            <input type="range" min="0" max="4" step="1" value="3" class="slider" id="idSlider">
+            <input type="range" min="0" max="4" step="1" value="3" class="slider" id="idSliderSpeed">
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" id="idGridSize">Gridsize: </a>
+        <a class="slidecontainer">
+            <input type="range" min="20" max="50" step="1" value="35" class="slider" id="idSliderGridSize">
         </a>
         <!-- <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="#">Something else here</a> -->
@@ -43,9 +50,9 @@
 {% block body %}
 <!-- How tho center:
     https://www.w3.org/Style/Examples/007/center.en.html-->
-<div class="pop-outer" id="idOuter" hidden>
-    <div class="pop-inner noselect">
-        <h2 style="color: #58BC82; margin-top: 2%">Welcome!</h2>
+<div class="popup" id="idPopup" hidden>
+    <div class="popup-inner noselect">
+        <h2 style="color: #58BC82; margin-top: 2%; font-size: 2rem">Welcome!</h2>
         <button type="button" class="close" id="idBtnClose" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -68,9 +75,12 @@
             </svg>
         </div>
         <div class="tutorial-body" id="idTutorialText">
-            <h4 class="mb-3">This is a short tutorial that takes you through the different aspects and
-                functionalities of this website.</h4>
-            <h5>Let's get started by clicking on the right arrow!</h5>
+            <div class="popuptext">
+                <h4 class="mb-3">This is a short tutorial that takes you through the different aspects and
+                    functionalities of this website.</h4>
+                <h5>Let's get started by clicking on the right arrow!</h5>
+            </div>
+
 
         </div>
 
@@ -78,39 +88,100 @@
     </div>
 </div>
 
-
-<div class="d-flex flex-row">
-    <input class="btn btn-primary mt-2 mr-2" type="button" value="Place start node"
-           style="background-color: #58BC82; border-color: #58BC82" id="idStart">
-    <input class="btn btn-primary mt-2 mr-2" type="button" value="Place target node"
-           style="background-color: #EFA00B; border-color: #EFA00B" id="idTarget">
-    <input class="btn btn-primary mt-2" type="button" style="background-color: #22AED1; border-color: #22AED1"
-           value="Visualize !" id="idVisualize">
-    <div class="ml-auto mt-2" style="height: 10px; margin-right: 85px">
-        <div id="idAlert">
-            <div class="alert alert-success" role="alert" hidden>
-                This is a success alert—check it out!
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 mt-3">
+            <input class="btn btn-primary mt-1" type="button" value="Place start node"
+                   style="background-color: #58BC82; border-color: #58BC82" id="idStart">
+            <input class="btn btn-primary mt-1" type="button" value="Place target node"
+                   style="background-color: #EFA00B; border-color: #EFA00B" id="idTarget">
+            <input class="btn btn-primary mt-1" type="button"
+                   style="background-color: #22AED1; border-color: #22AED1"
+                   value="Visualize !" id="idVisualize">
+            <div class="ml-auto mt-2" style="height: 10px; margin-right: 85px">
+                <div id="idAlert">
+                    <div class="alert alert-success" role="alert" hidden>
+                        This is a success alert—check it out!
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
+    <div class="row">
+        <div class="col-lg-12 mt-2">
+            <div class="legend mr-3"><h5>Legend:</h5></div>
+            <div class="legend"><img src="/static/images/start.JPG" alt="" class="img_legend">
+                <figcaption>Start node</figcaption>
+            </div>
+            <div class="legend"><img src="/static/images/target.JPG" alt="" class="img_legend">
+                <figcaption>Target node</figcaption>
+            </div>
+            <div class="legend"><img src="/static/images/wall.JPG" alt="" class="img_legend">
+                <figcaption>Wall nodes</figcaption>
+            </div>
+            <div class="legend"><img src="/static/images/evaluated.JPG" alt="" class="img_legend">
+                <figcaption>Evaluated nodes</figcaption>
+            </div>
+            <div class="legend"><img src="/static/images/calculated.JPG" alt="" class="img_legend">
+                <figcaption>Calculated path</figcaption>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <canvas id="myCanvas" width="100%" height="100%">
+                Your browser does not support this element
+            </canvas>
+        </div>
+    </div>
+    <!--
+    <div class="row">
+        <div class="col-lg-12 mt-2">
+                <input class="btn btn-primary" type="button" value="Place start node"
+                       style="background-color: #58BC82; border-color: #58BC82" id="idStart">
+                <input class="btn btn-primary" type="button" value="Place target node"
+                       style="background-color: #EFA00B; border-color: #EFA00B" id="idTarget">
+                <input class="btn btn-primary" type="button"
+                       style="background-color: #22AED1; border-color: #22AED1"
+                       value="Visualize !" id="idVisualize">
+                <div class="ml-auto mt-2" style="height: 10px; margin-right: 85px">
+                    <div id="idAlert">
+                        <div class="alert alert-success" role="alert" hidden>
+                            This is a success alert—check it out!
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            Test
+        </div>
+    </div> -->
+
+    <!--
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="list mt-2">
+                <li><h5>Legend:</h5></li>
+                <li><img src="/static/images/start.JPG" alt="" class="img_legend"></li>
+                <li>Start node</li>
+                <li><img src="/static/images/target.JPG" alt="" class="img_legend"></li>
+                <li>Target node</li>
+                <li><img src="/static/images/wall.JPG" alt="" class="img_legend"></li>
+                <li>Wall nodes</li>
+                <li><img src="/static/images/evaluated.JPG" alt="" class="img_legend"></li>
+                <li>Evaluated nodes</li>
+                <li><img src="/static/images/calculated.JPG" alt="" class="img_legend"></li>
+                <li>Calculated path</li>
+            </ul>
+        </div>
+    </div> -->
+
+    <!--
+        <canvas id="myCanvas" >
+            Your browser does not support this element
+        </canvas> -->
 </div>
-
-<ul class="list mt-2">
-    <li><h5>Legend:</h5></li>
-    <li><img src="/static/images/start.JPG" alt="" class="img_legend"></li>
-    <li>Start node</li>
-    <li><img src="/static/images/target.JPG" alt="" class="img_legend"></li>
-    <li>Target node</li>
-    <li><img src="/static/images/wall.JPG" alt="" class="img_legend"></li>
-    <li>Wall nodes</li>
-    <li><img src="/static/images/evaluated.JPG" alt="" class="img_legend"></li>
-    <li>Evaluated nodes</li>
-    <li><img src="/static/images/calculated.JPG" alt="" class="img_legend"></li>
-    <li>Calculated path</li>
-</ul>
-
-<canvas id="myCanvas" style="margin-right: 85px">
-    Your browser does not support this element
-</canvas>
 {% endblock %}

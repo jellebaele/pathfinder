@@ -13,7 +13,7 @@ let isDraggingTarget = false;
 
 // grid props
 let grid;
-const stepSize = 30;
+let gridSize = 30;
 const lineWidth = 1;
 
 // Wall props
@@ -57,14 +57,18 @@ window.onload = function () {
 
 function init() {
     // Create canvas that fits in the screen
-    myWidth = window.innerWidth - 100;
-    myHeight = window.innerHeight - 175;
+    myWidth = document.getElementsByClassName("container")[0].clientWidth - 25;
+    myHeight = window.innerHeight - 250;
 
     ctx.canvas.width = myWidth;
     ctx.canvas.height = myHeight;
 
+    // Get gridSize
+    let sliderGrid = document.getElementById("idSliderGridSize");
+    gridSize = parseInt(sliderGrid.value);
+
     // Create a grid object
-    grid = new Grid(myWidth, myHeight, stepSize, lineWidth, ctx, colorGrid, colorWall, colorStart,
+    grid = new Grid(myWidth, myHeight, gridSize, lineWidth, ctx, colorGrid, colorWall, colorStart,
         colorTarget, colorEvaluated, colorPath);
 
     // Create grid
@@ -87,12 +91,13 @@ function init() {
     // Check if button "idVisualize" can be enabled
     checkEnableVisualize();
 
-    // Set label of speed
-    setLabel();
+    // Set label of speed and grid size
+    setLabelSpeed();
+    setLabelGrid();
 
     document.getElementById("idAlert").hidden = true;
     document.getElementById("idBtnClose").onclick = function () {
-        document.getElementsByClassName("pop-outer")[0].hidden = true;
+        document.getElementsByClassName("popup")[0].hidden = true;
     };
 
     if (!checkCookie("tutorial")) {
@@ -407,16 +412,41 @@ function getMessage(location, id) {
         });
 }
 
-function setLabel() {
-    let slider = document.getElementById("idSlider");
-    let label = document.getElementById("idSpeed");
+// Function to set the labels of the sliders
+function setLabelSpeed() {
+    let sliderSpeed = document.getElementById("idSliderSpeed");
+    let labelSpeed = document.getElementById("idSpeed");
     let txtLabels = ['Very slow', 'Slow', 'Intermediate', 'Fast', 'Very fast'];
-    label.innerHTML = "Speed: " + txtLabels[slider.value];
+    labelSpeed.innerHTML = "Speed: " + txtLabels[sliderSpeed.value];
 
-    loopSpeed = speeds[slider.value];
+    loopSpeed = speeds[sliderSpeed.value];
     if (isVisualizing) {
         window.clearInterval(loop);
         loop = window.setInterval(findPathLoop, loopSpeed);
+    }
+}
+
+function setLabelGrid() {
+    let sliderGrid = document.getElementById("idSliderGridSize");
+    let labelGrid = document.getElementById("idGridSize");
+    labelGrid.innerHTML = "Grid size: " + sliderGrid.value;
+
+
+    if (gridSize !== parseInt(sliderGrid.value)) {
+        gridSize = parseInt(sliderGrid.value);
+        grid = new Grid(myWidth, myHeight, gridSize, lineWidth, ctx, colorGrid, colorWall, colorStart,
+            colorTarget, colorEvaluated, colorPath);
+        // Create grid
+        grid.create();
+        // Fill nodes
+        grid.fillNodes();
+    }
+
+    if (isVisualizing) {
+        sliderGrid.disabled = true;
+    }
+    if (isVisualized) {
+        sliderGrid.disabled = false;
     }
 }
 
@@ -484,7 +514,7 @@ function tutorialHandler() {
             "<br><br> <h6>Note: You need an account for this, do no hesitate to register for free!</h6>"
     } else if (tutCounter === 8) {
         tutorialBody.innerHTML = "<h4 class=\"mb-3\">What else? Enjoy!</h4>\n" +
-            "<h5 class='mb-3'>Now all that is left for you, is to enjoy! Other functions can be found in the navigation bar such as clearing the walls, clearing the path, etc.</h5>" +
+            "<h5 class='mb-3'>Now all that is left for you is to enjoy! Other functions can be found in the navigation bar such as clearing the walls, clearing the path, etc.</h5>" +
             "<img src=\"/static/images/Tutorial_5.JPG\" " +
             "alt=\"pathfinding example\" width=\"80%\"/>" +
             "<h6 class='mt-5'> The full source code of this website can be found via " +
@@ -495,7 +525,7 @@ function tutorialHandler() {
 function showTutorial() {
     tutCounter = 1;
     tutorialHandler();
-    document.getElementsByClassName("pop-outer")[0].hidden = false;
+    document.getElementsByClassName("popup")[0].hidden = false;
 }
 
 function setCookie(cname, cvalue, exdays) {
@@ -525,7 +555,8 @@ document.getElementById("idTarget").onclick = createTargetNode;
 document.getElementById("idVisualize").onclick = visualizeIncrement;
 document.getElementById("idSave").onclick = save;
 document.getElementById("idReset").onclick = resetCanvas;
-document.getElementById("idSlider").onmousemove = setLabel;
+document.getElementById("idSliderSpeed").onmousemove = setLabelSpeed;
+document.getElementById("idSliderGridSize").onmousemove = setLabelGrid;
 document.getElementById("idClearPath").onclick = clearPath;
 document.getElementById("idClearWall").onclick = clearWalls;
 document.getElementById("idArrowLeft").onclick = tutorialPrevious;

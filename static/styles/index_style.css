@@ -4,36 +4,22 @@
 
 #myCanvas {
     position: absolute;
-    margin-left: 2.5%;
     color: black;
 }
 
-.list {
+.legend {
     vertical-align: middle;
-}
-
-.list > li {
     display: inline-block;
-    list-style: none;
-    font-size: 18px;
-    align-items: normal;
-}
-
-#idStart {
-    margin-left: 2.5%;
 }
 
 .btn-primary {
     font-size: 16px;
+    margin-right: 10px;
 }
 
 .alert {
     font-size: 14px;
     display: inline-block;
-}
-
-#idVisualize {
-    margin-right: 2.5%;
 }
 
 .slidecontainer {
@@ -84,20 +70,33 @@
     width: 20px;
     align-self: center;
     padding: 0 0 4px 4px;
-    margin-left: 15px;
 }
 
-.pop-outer {
+.img_text {
+    margin-right: 5px;
+}
+
+figcaption{
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.popup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: rgba(0, 0, 0, 0.2);
-    position: absolute;
+    position: fixed;
     z-index: 3;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    transition: .64s ease-in-out;
 }
 
-.pop-inner {
+.popup-inner {
     position: absolute;
     z-index: 3;
     background-color: rgba(255, 255, 255, 1);

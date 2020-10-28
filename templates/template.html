@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
@@ -15,6 +16,7 @@
         gtag('js', new Date());
 
         gtag('config', 'UA-180579128-2');
+
     </script>
 
 
@@ -23,46 +25,48 @@
 <body>
 <nav id="idNav">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="/" id="logo" style="color: #58BC82">
-            Pathfinder
-        </a>
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" id="logo" style="color: #58BC82">
+                Pathfinder
+            </a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="nav navbar-nav navbar-left">
-                <li class="nav-item">
-                    <a href="/home" class="nav-item nav-link">Home</a>
-                </li>
-                {% block nav %} {% endblock %}
-                <!--<li class="nav-item">
-                    <a href="/" class="nav-item nav-link">Home</a>
-                </li>-->
-            </ul>
-            <ul class="nav navbar-nav ml-auto">
-                {% if session.logged_in %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ session.name }}
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/profile">My profile</a>
-                    </div>
-                </li>
-                <li>
-                    <a href="/logout" class="nav-item nav-link">Log out</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a href="/register" class="nav-item nav-link">Register</a>
-                </li>
-                <li>
-                    <a href="/login" class="nav-item nav-link">Log in</a>
-                </li>
-                {% endif %}
-            </ul>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="nav-item">
+                        <a href="/home" class="nav-item nav-link">Home</a>
+                    </li>
+                    {% block nav %} {% endblock %}
+                    <!--<li class="nav-item">
+                        <a href="/" class="nav-item nav-link">Home</a>
+                    </li>-->
+                </ul>
+                <ul class="nav navbar-nav ml-auto">
+                    {% if session.logged_in %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ session.name }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/profile">My profile</a>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="/logout" class="nav-item nav-link">Log out</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a href="/register" class="nav-item nav-link">Register</a>
+                    </li>
+                    <li>
+                        <a href="/login" class="nav-item nav-link">Log in</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
 </nav>

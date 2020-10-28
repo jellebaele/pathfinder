@@ -18,15 +18,17 @@ export default class Grid {
         this.colorWall = colorWall;
         this.colorStart = colorStart;
         this.colorTarget = colorTarget;
-        this.colorEvaluated =  colorEvaluated;
+        this.colorEvaluated = colorEvaluated;
         this.colorPath = colorPath;
 
         this.path = [];
         this.evaluated = [];
+
     }
 
     // Create list of nodes and draw on screen
     create() {
+        this.clearCanvas();
         this.ctx.beginPath();
         this.ctx.strokeStyle = this.colorGrid;
         this.ctx.lineWidth = this.lineWidth;
@@ -45,6 +47,10 @@ export default class Grid {
             }
         }
         this.ctx.stroke();
+    }
+
+    clearCanvas() {
+        this.ctx.clearRect(0,0,this.width, this.height);
     }
 
     // adjust position of start node
