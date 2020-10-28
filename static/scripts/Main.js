@@ -58,7 +58,7 @@ window.onload = function () {
 function init() {
     // Create canvas that fits in the screen
     myWidth = document.getElementsByClassName("container")[0].clientWidth - 25;
-    myHeight = window.innerHeight - 250;
+    myHeight = window.innerHeight - 200;
 
     ctx.canvas.width = myWidth;
     ctx.canvas.height = myHeight;
@@ -433,6 +433,7 @@ function setLabelGrid() {
 
 
     if (gridSize !== parseInt(sliderGrid.value)) {
+        isVisualized = false;
         gridSize = parseInt(sliderGrid.value);
         grid = new Grid(myWidth, myHeight, gridSize, lineWidth, ctx, colorGrid, colorWall, colorStart,
             colorTarget, colorEvaluated, colorPath);
@@ -440,6 +441,8 @@ function setLabelGrid() {
         grid.create();
         // Fill nodes
         grid.fillNodes();
+
+        a_star = new A_star(grid);
     }
 
     if (isVisualizing) {
