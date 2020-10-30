@@ -96,9 +96,9 @@ function init() {
     setLabelGrid();
 
     document.getElementById("idAlert").hidden = true;
-    document.getElementById("idBtnClose").onclick = function () {
+    /*document.getElementById("idBtnClose").onclick = function () {
         document.getElementsByClassName("popup")[0].hidden = true;
-    };
+    };*/
 
     if (!checkCookie("tutorial")) {
         showTutorial();
@@ -562,6 +562,6 @@ document.getElementById("idSliderSpeed").onmousemove = setLabelSpeed;
 document.getElementById("idSliderGridSize").onmousemove = setLabelGrid;
 document.getElementById("idClearPath").onclick = clearPath;
 document.getElementById("idClearWall").onclick = clearWalls;
-document.getElementById("idArrowLeft").onclick = tutorialPrevious;
-document.getElementById("idArrowRight").onclick = tutorialNext;
+/*document.getElementById("idArrowLeft").onclick = tutorialPrevious;
+document.getElementById("idArrowRight").onclick = tutorialNext;*/
 document.getElementById("idShowTutorial").onclick = showTutorial;
