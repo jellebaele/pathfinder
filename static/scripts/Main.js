@@ -373,9 +373,21 @@ function success() {
     let div = document.createElement("div");
     div.setAttribute("class", "alert alert-success");
     div.setAttribute("role", "alert");
-    div.innerHTML = "Layout successfully saved !";
-    alert.appendChild(div);
 
+    let closeBtn = document.createElement("a");
+    closeBtn.setAttribute("href", "#");
+    closeBtn.setAttribute("class", "close");
+    closeBtn.setAttribute("data-dismiss","alert");
+    closeBtn.setAttribute('aria-label',"close");
+    closeBtn.innerHTML = "&times;";
+
+    let div2 = document.createElement('div');
+    div2.innerHTML = "Layout successfully saved !";
+
+    div.appendChild(closeBtn);
+    div.appendChild(div2);
+
+    alert.appendChild(div);
     alert.hidden = false;
     timer = window.setInterval(hide, 10000);
 }
@@ -387,9 +399,21 @@ function fail() {
     let div = document.createElement("div");
     div.setAttribute("class", "alert alert-fail");
     div.setAttribute("role", "alert");
-    div.innerHTML = "Something went wrong";
-    alert.appendChild(div);
 
+    let closeBtn = document.createElement("a");
+    closeBtn.setAttribute("href", "#");
+    closeBtn.setAttribute("class", "close");
+    closeBtn.setAttribute("data-dismiss","alert");
+    closeBtn.setAttribute('aria-label',"close");
+    closeBtn.innerHTML = "&times;";
+
+    let div2 = document.createElement('div');
+    div2.innerHTML = "Something went wrong";
+
+    div.appendChild(closeBtn);
+    div.appendChild(div2);
+
+    alert.appendChild(div);
     alert.hidden = false;
     timer = window.setInterval(hide, 10000);
 }
