@@ -27,7 +27,6 @@ import Node from "../objects/Node.js";
 import Grid from "../Grid.js";
 
 export default class A_star {
-    // Start & target
     constructor(grid) {
         this.grid = grid;
         this.loop = null;
@@ -39,6 +38,7 @@ export default class A_star {
     }
 
     getPath(startNode, targetNode) {
+        // Check if both a start and target node are declared
         if (startNode === null || targetNode === null)
             return false;
 
@@ -54,16 +54,13 @@ export default class A_star {
         // Loop until solution is found or there are no nodes left to be evaluated
         while (!pathFound && this.list_open.length > 0) {
             if (this.calculatePath(startNode, targetNode)) {
-                pathFound = true;
-                return true;
+                return pathFound = true;
             }
         }
 
-        // After while loop; in order to delete the visualised path on the grid
-        if (!pathFound) {
-            this.grid.path = [];
-            return false;
-        }
+        // In case no path is found, delete the previous visualised path on the grid
+        this.grid.path = [];
+        return false;
     }
 
     getPathStepByStep(startNode, targetNode) {
@@ -71,7 +68,7 @@ export default class A_star {
             return null;
         }
 
-        // Check if it's the first init
+        // Check if it's the first time this function is called
         if (this.list_open.length < 1) {
             // Create list with nodes to be evaluated
             this.list_open = [];
@@ -120,13 +117,15 @@ export default class A_star {
         // If the position of the current_node == position of the target node,
         // the path is found
         if (current_node.x === targetNode.x && current_node.y === targetNode.y) {
+            // Retrace the calculated path
             this.retracePath(startNode, targetNode);
+            // Reset the list_open and list_closed
             this.list_open = [];
             this.list_closed = [];
             return true;
         }
 
-        // Get the neighbors of the current_node that is being evaluated
+        // If the target node is not reached yet, get the neighbors of the current_node that is being evaluated
         let neighbors = this.grid.getNeighbours(current_node);
 
         // Loop over all neighbors and check if it is a wall or it has already been evaluated
@@ -147,8 +146,8 @@ export default class A_star {
                 }
             }
         });
+
         this.grid.evaluated = this.list_closed;
-        // console.log(this.list_open.length < 1);
         return false;
     }
 
@@ -159,9 +158,7 @@ export default class A_star {
         let distX = Math.abs(nodeA.x - nodeB.x) / this.grid.step;
         let distY = Math.abs(nodeA.y - nodeB.y) / this.grid.step;
 
-        if (distX > distY)
-            return 14 * distY + 10 * (distX - distY);
-        return 14 * distX + 10 * (distY - distX);
+        return distX + distY;
     }
 
     // Retrace path backwards from parent to parent
@@ -176,7 +173,6 @@ export default class A_star {
                 break;
             }
         }
-
         this.grid.path = path.reverse();
     }
 }

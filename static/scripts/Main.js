@@ -105,6 +105,20 @@ function init() {
         setCookie("tutorial", "1", 100);
     }
 
+    console.log("grid: " + gridSize);
+    console.log("width:" + myWidth);
+    console.log("Height:" + myHeight);
+    console.log(Math.floor(myHeight/gridSize) + "x" + Math.floor(myWidth/gridSize));
+    /**
+     * 20 x 35 gridsize 35
+     *
+     * ->
+     * 1115 / 35 x 233 / 35 = 6 x 31
+     * Laagtste moet 20 worden
+     * 1115 / x = 20
+     * 1115 / 20 =
+     */
+
 }
 
 // Function to update button to create startnode
@@ -138,6 +152,7 @@ function resetCanvas() {
     location.replace("/");
 }
 
+// Show path step by step
 function visualizeIncrement() {
     isVisualized = false;
     if (!isVisualizing) {
@@ -176,12 +191,11 @@ function drawPathIncrement() {
 
         i++;
     }, speeds[3]);
-
 }
 
 // Function to execute A* algorithm
 function visualize() {
-    a_star.getPath(grid.startNode, grid.targetNode);
+    let found = a_star.getPath(grid.startNode, grid.targetNode);
     grid.fillNodes();
     grid.drawPath();
     isVisualized = true;
